@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>시스템 설계도</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4 portrait; margin: 12mm; }
+  :root { --ink: #1B1D22; --ink2: #4D5159; --muted: #80858E; --line: #E0E2E6; --accent: #5055B1; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #fff; color: var(--ink); font-family: "Noto Sans KR", "Malgun Gothic", sans-serif; letter-spacing: -0.01em; }
+  .page { max-width: 760px; margin: 0 auto; padding: 24px 16px; }
+  .eyebrow { font-size: 12px; color: var(--accent); font-weight: 500; margin: 0; }
+  h1 { font-size: 28px; line-height: 38px; margin: 4px 0 4px; }
+  .sub { font-size: 14px; color: var(--ink2); margin: 0 0 16px; }
+  svg { width: 100%; height: auto; display: block; }
+  .foot { border-top: 1px solid var(--line); margin-top: 12px; padding-top: 8px; font-size: 11px; color: var(--muted); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  @media print { .page { padding: 0; max-width: none; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <p class="eyebrow">성북 안심 민원 필터 · 1차 시제품 · 2026.11.19.</p>
+  <h1>시스템 설계도</h1>
+  <p class="sub">이용자가 쓴 글이 화면 → 서버 → AI·자료로 내려가고, 결과가 다시 화면으로 돌아옵니다.</p>
+
+<svg viewBox="0 0 720 880" role="img" aria-labelledby="sysmap-title sysmap-desc" xmlns="http://www.w3.org/2000/svg">
+  <title id="sysmap-title">성북 안심 민원 필터 시스템 설계도</title>
+  <desc id="sysmap-desc">민원인·담당 공무원·관리자가 웹 화면을 쓰고, 화면은 브라우저에 기록을 저장하며 서버에 글과 질문을 보내고, 서버는 AI 3개·공공 API·답변참고문서를 이용해 분류와 답을 만들어 돌려주는 구조.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#80858E"/></marker>
+    <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5055B1"/></marker>
+  </defs>
+  <rect width="720" height="880" fill="#fff"/>
+
+  <!-- 줄 이름 -->
+  <g font-family="'Noto Sans KR', sans-serif" font-size="12" font-weight="500" fill="#80858E">
+    <text x="40" y="28">이용하는 사람</text>
+    <text x="40" y="160">웹 화면</text>
+    <text x="40" y="332">서버</text>
+    <text x="40" y="564">AI · 자료</text>
+  </g>
+
+  <!-- ===== 화살표 (상자보다 먼저) ===== -->
+  <g fill="none" stroke-width="1.2">
+    <!-- 사람 → 화면 -->
+    <path d="M140,104 V168" stroke="#80858E" marker-end="url(#arrow)"/>
+    <path d="M360,104 V168" stroke="#80858E" marker-end="url(#arrow)"/>
+    <path d="M580,104 V168" stroke="#80858E" marker-end="url(#arrow)"/>
+    <!-- 화면 → 서버 (강조) / 서버 → 화면 (결과, 점선) -->
+    <path d="M280,268 V340" stroke="#5055B1" marker-end="url(#arrow-accent)"/>
+    <path d="M200,340 V268" stroke="#80858E" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+    <!-- 화면 → 브라우저 저장 -->
+    <path d="M600,268 V360" stroke="#80858E" marker-end="url(#arrow)"/>
+    <!-- 서버 → AI · 공공 API · 문서 -->
+    <path d="M140,500 V572" stroke="#80858E" marker-end="url(#arrow)"/>
+    <path d="M360,500 V572" stroke="#80858E" marker-end="url(#arrow)"/>
+    <path d="M440,500 V528 Q440,536 448,536 H572 Q580,536 580,544 V572" stroke="#80858E" marker-end="url(#arrow)"/>
+  </g>
+
+  <!-- 화살표 라벨 (가림 사각형 + 6px 이상 간격) -->
+  <g font-family="'Noto Sans KR', sans-serif" font-size="12" font-weight="500">
+    <rect x="292" y="292" width="88" height="16" rx="2" fill="#fff"/>
+    <text x="296" y="304" fill="#5055B1">글·질문 보내기</text>
+    <rect x="132" y="292" width="60" height="16" rx="2" fill="#fff"/>
+    <text x="188" y="304" fill="#80858E" text-anchor="end">결과 받기</text>
+    <rect x="612" y="304" width="88" height="16" rx="2" fill="#fff"/>
+    <text x="616" y="316" fill="#80858E">민원·이력 저장</text>
+    <rect x="152" y="540" width="80" height="16" rx="2" fill="#fff"/>
+    <text x="156" y="552" fill="#80858E">분류·답 요청</text>
+    <rect x="372" y="548" width="64" height="16" rx="2" fill="#fff"/>
+    <text x="376" y="560" fill="#80858E">최신 법령</text>
+    <rect x="476" y="512" width="68" height="16" rx="2" fill="#fff"/>
+    <text x="510" y="524" fill="#80858E" text-anchor="middle">문서 찾기</text>
+  </g>
+
+  <!-- ===== 상자 ===== -->
+  <g font-family="'Noto Sans KR', sans-serif">
+    <!-- 1줄: 사람 -->
+    <g>
+      <rect x="40" y="40" width="200" height="64" rx="8" fill="#F4F5F7" stroke="#C9CCD2"/>
+      <text x="140" y="66" text-anchor="middle" font-size="16" font-weight="700" fill="#1B1D22">민원인</text>
+      <text x="140" y="88" text-anchor="middle" font-size="12" fill="#4D5159">글을 쓰고 제출해요</text>
+      <rect x="260" y="40" width="200" height="64" rx="8" fill="#F4F5F7" stroke="#C9CCD2"/>
+      <text x="360" y="66" text-anchor="middle" font-size="16" font-weight="700" fill="#1B1D22">담당 공무원</text>
+      <text x="360" y="88" text-anchor="middle" font-size="12" fill="#4D5159">단계를 확정하거나 바꿔요</text>
+      <rect x="480" y="40" width="200" height="64" rx="8" fill="#F4F5F7" stroke="#C9CCD2"/>
+      <text x="580" y="66" text-anchor="middle" font-size="16" font-weight="700" fill="#1B1D22">관리자·감사</text>
+      <text x="580" y="88" text-anchor="middle" font-size="12" fill="#4D5159">통계를 보고 AI를 멈춰요</text>
+    </g>
+
+    <!-- 2줄: 웹 화면 -->
+    <g>
+      <rect x="40" y="168" width="640" height="100" rx="8" fill="#fff" stroke="#1B1D22"/>
+      <rect x="56" y="180" width="64" height="20" rx="4" fill="none" stroke="#C9CCD2"/>
+      <text x="88" y="194" text-anchor="middle" font-size="12" fill="#80858E" font-family="'Roboto Mono', monospace">public</text>
+      <text x="132" y="196" font-size="16" font-weight="700" fill="#1B1D22">웹 화면 — 탭 4개</text>
+      <text x="56" y="228" font-size="14" fill="#1B1D22">민원 쓰기 · 분류 현황판 · 통계·감독 · 안내 챗봇</text>
+      <text x="56" y="252" font-size="12" fill="#4D5159">문제 표현은 회색 띠로 가리고, AI가 만든 문장에는 「AI가 만든 문장」 표시</text>
+    </g>
+
+    <!-- 3줄: 서버 (강조 1곳) -->
+    <g>
+      <rect x="40" y="340" width="440" height="160" rx="8" fill="#EEEFFA" stroke="#5055B1" stroke-width="1.2"/>
+      <rect x="56" y="352" width="40" height="20" rx="4" fill="none" stroke="#5055B1" stroke-opacity="0.5"/>
+      <text x="76" y="366" text-anchor="middle" font-size="12" fill="#5055B1" font-family="'Roboto Mono', monospace">api</text>
+      <text x="108" y="368" font-size="16" font-weight="700" fill="#1B1D22">판단을 돕는 서버</text>
+      <text x="56" y="400" font-size="12" font-weight="700" fill="#5055B1">민원 분류</text>
+      <text x="124" y="400" font-size="12" fill="#1B1D22">① 개인정보 *** 가림  ② 1차 표현 목록 검사</text>
+      <text x="124" y="420" font-size="12" fill="#1B1D22">③ AI 문맥 판단  → 1·2차가 다르면 「검토필요」</text>
+      <text x="56" y="452" font-size="12" font-weight="700" fill="#5055B1">안내 챗봇</text>
+      <text x="124" y="452" font-size="12" fill="#1B1D22">문서 찾기 → AI 답 + 근거 문서 이름</text>
+      <text x="56" y="484" font-size="12" fill="#4D5159">결과: 정상 / 검토필요 / 차단후보 — 표시만, 결정은 사람이</text>
+    </g>
+
+    <!-- 브라우저 저장 -->
+    <g>
+      <rect x="520" y="360" width="160" height="120" rx="8" fill="#F4F5F7" stroke="#80858E" stroke-dasharray="4,3"/>
+      <text x="600" y="392" text-anchor="middle" font-size="16" font-weight="700" fill="#1B1D22">브라우저 저장</text>
+      <text x="600" y="420" text-anchor="middle" font-size="12" fill="#4D5159">민원 · 판단 이력</text>
+      <text x="600" y="440" text-anchor="middle" font-size="12" fill="#4D5159">이 컴퓨터에만 보관</text>
+      <text x="600" y="464" text-anchor="middle" font-size="12" fill="#80858E">(시제품)</text>
+    </g>
+
+    <!-- 4줄: AI · 자료 -->
+    <g>
+      <rect x="40" y="572" width="200" height="168" rx="8" fill="#FAFBFC" stroke="#C9CCD2"/>
+      <text x="56" y="600" font-size="16" font-weight="700" fill="#1B1D22">AI 3개</text>
+      <text x="56" y="628" font-size="12" fill="#1B1D22">Claude → Groq → Gemini</text>
+      <text x="56" y="648" font-size="12" fill="#4D5159">앞이 막히면 다음 AI로</text>
+      <text x="56" y="668" font-size="12" fill="#4D5159">어느 AI가 답했는지 기록</text>
+      <rect x="56" y="684" width="168" height="20" rx="4" fill="#EAF6E4"/>
+      <text x="140" y="698" text-anchor="middle" font-size="12" fill="#3A8A1C">Claude·Groq 실시간 확인</text>
+      <rect x="56" y="708" width="168" height="20" rx="4" fill="#EAEBEE"/>
+      <text x="140" y="722" text-anchor="middle" font-size="12" fill="#4D5159">Gemini 미확인(과부하)</text>
+
+      <rect x="260" y="572" width="200" height="168" rx="8" fill="#FAFBFC" stroke="#C9CCD2"/>
+      <text x="276" y="600" font-size="16" font-weight="700" fill="#1B1D22">공공 API</text>
+      <text x="276" y="628" font-size="12" fill="#1B1D22">법령 시행일 (법제처)</text>
+      <text x="276" y="648" font-size="12" fill="#1B1D22">입법예고 (법제처)</text>
+      <text x="276" y="668" font-size="12" fill="#1B1D22">민원 키워드 (공공데이터)</text>
+      <rect x="276" y="696" width="168" height="32" rx="4" fill="#EAEBEE"/>
+      <text x="360" y="710" text-anchor="middle" font-size="12" fill="#4D5159">지금은 시연 값</text>
+      <text x="360" y="724" text-anchor="middle" font-size="12" fill="#80858E">키 없음 · 승인 전</text>
+
+      <rect x="480" y="572" width="200" height="168" rx="8" fill="#FAFBFC" stroke="#C9CCD2"/>
+      <text x="496" y="600" font-size="16" font-weight="700" fill="#1B1D22">답변참고문서</text>
+      <text x="496" y="628" font-size="12" fill="#1B1D22">법령 · 조례 · 정부 지침</text>
+      <text x="496" y="648" font-size="12" fill="#1B1D22">서비스 운영 기준 · 문의처</text>
+      <text x="496" y="668" font-size="12" fill="#4D5159">「청킹」 폴더만 읽어요</text>
+      <rect x="496" y="696" width="168" height="32" rx="4" fill="#EAF6E4"/>
+      <text x="580" y="710" text-anchor="middle" font-size="12" fill="#3A8A1C">챗봇 답의 근거</text>
+      <text x="580" y="724" text-anchor="middle" font-size="12" fill="#3A8A1C">없으면 문의처 안내</text>
+    </g>
+  </g>
+
+  <!-- 원칙 한 줄 -->
+  <g font-family="'Noto Sans KR', sans-serif">
+    <rect x="40" y="764" width="640" height="40" rx="8" fill="#F4F5F7"/>
+    <text x="360" y="789" text-anchor="middle" font-size="14" font-weight="500" fill="#1B1D22">AI는 표시하고 제안만 해요 · 접수 거부·삭제·종결은 하지 않아요 · 최종 결정은 담당 공무원</text>
+  </g>
+
+  <!-- 범례 -->
+  <line x1="40" y1="824" x2="680" y2="824" stroke="#E0E2E6" stroke-width="0.8"/>
+  <g font-family="'Noto Sans KR', sans-serif" font-size="12" fill="#4D5159">
+    <text x="40" y="852" font-weight="500" fill="#80858E">범례</text>
+    <rect x="80" y="840" width="20" height="16" rx="3" fill="#EEEFFA" stroke="#5055B1"/>
+    <text x="108" y="852">핵심(서버)</text>
+    <rect x="184" y="840" width="20" height="16" rx="3" fill="#F4F5F7" stroke="#80858E" stroke-dasharray="4,3"/>
+    <text x="212" y="852">저장 장소</text>
+    <line x1="284" y1="848" x2="316" y2="848" stroke="#5055B1" stroke-width="1.2" marker-end="url(#arrow-accent)"/>
+    <text x="324" y="852">보내기</text>
+    <line x1="376" y1="848" x2="408" y2="848" stroke="#80858E" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+    <text x="416" y="852">결과 돌려받기</text>
+    <rect x="508" y="840" width="20" height="16" rx="3" fill="#EAF6E4"/>
+    <text x="536" y="852">실시간</text>
+    <rect x="588" y="840" width="20" height="16" rx="3" fill="#EAEBEE"/>
+    <text x="616" y="852">시연 값</text>
+  </g>
+</svg>
+
+  <div class="foot">
+    <span>한성대학교 AI 기반 공공행정 캡스톤 2026-2 · 시제품은 가상 민원만 사용</span>
+    <span>파일: public · api · docs/답변참고문서/청킹</span>
+  </div>
+</div>
+</body>
+</html>

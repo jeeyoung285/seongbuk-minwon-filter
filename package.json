@@ -1,0 +1,9 @@
+{
+  "name": "seongbuk-safe-minwon-filter",
+  "private": true,
+  "description": "성북 안심 민원 필터 시제품 — AI가 표시하고 사람이 결정하는 민원 글 보호·순화 서비스",
+  "scripts": {
+    "start": "node --env-file=.env server.js"
+  },
+  "engines": { "node": ">=20.6" }
+}

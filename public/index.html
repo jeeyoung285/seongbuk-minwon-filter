@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>성북 안심 민원 필터</title>
+<meta name="description" content="AI가 표시하고 사람이 결정하는 성북구 온라인 민원 글 보호·순화 서비스 시제품">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <div>
+      <strong>성북 안심 민원 필터</strong>
+      <small>AI는 표시만 하고, 결정은 담당 공무원이 합니다 · 시제품(가상 민원만 사용)</small>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist" aria-label="사용자 화면">
+    <button role="tab" data-view="citizen" aria-selected="true">민원인</button>
+    <button role="tab" data-view="officer" aria-selected="false">담당 공무원</button>
+    <button role="tab" data-view="admin" aria-selected="false">관리자·감사</button>
+    <button role="tab" data-view="chat" aria-selected="false">안내 챗봇</button>
+  </nav>
+</header>
+
+<main>
+  <!-- 민원인 -->
+  <section id="view-citizen" class="view">
+    <div class="narrow">
+      <p class="eyebrow">구청장에게 바란다 · 민원 신청</p>
+      <h1>민원 글 쓰기</h1>
+      <p class="notice"><b>AI 사용 안내</b> 제출하면 AI가 글의 표현을 살펴 고쳐 쓸 문장을 제안할 수 있어요. 제안을 따르지 않아도 그대로 접수되고, 처리 기간(주말·공휴일 빼고 7일)도 같아요. 이름·전화번호·주소는 AI에 보내기 전에 *** 로 가립니다.</p>
+      <form id="form-citizen">
+        <label for="c-title">제목</label>
+        <input id="c-title" maxlength="80" placeholder="예: 성북동 골목 가로등 고장" required>
+        <label for="c-body">내용</label>
+        <textarea id="c-body" rows="8" maxlength="4000" placeholder="불편한 점과 바라는 점을 적어 주세요." required></textarea>
+        <div class="row-between">
+          <span class="hint mono" id="c-count">0 / 4000</span>
+          <button class="btn primary" type="submit" id="c-submit">제출하기</button>
+        </div>
+      </form>
+      <div class="examples">
+        <span class="hint">[가상 예시] 넣어 보기</span>
+        <button class="chip" data-ex="0">정상 요청</button>
+        <button class="chip" data-ex="1">강한 불만</button>
+        <button class="chip" data-ex="2">비꼬는 말</button>
+        <button class="chip" data-ex="3">위협 표현</button>
+      </div>
+      <div id="c-result" class="result" hidden></div>
+    </div>
+  </section>
+
+  <!-- 담당 공무원 -->
+  <section id="view-officer" class="view" hidden>
+    <div class="split">
+      <aside class="list-pane">
+        <div class="stage-tabs" role="tablist" aria-label="단계">
+          <button data-stage="검토필요" aria-selected="true">검토필요 <span class="mono" data-count="검토필요"></span></button>
+          <button data-stage="차단후보" aria-selected="false">차단후보 <span class="mono" data-count="차단후보"></span></button>
+          <button data-stage="정상" aria-selected="false">정상 <span class="mono" data-count="정상"></span></button>
+        </div>
+        <ul id="o-list" class="list"></ul>
+      </aside>
+      <article id="o-detail" class="detail-pane">
+        <p class="empty">왼쪽에서 민원을 고르세요.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- 관리자 -->
+  <section id="view-admin" class="view" hidden>
+    <div class="wide">
+      <div class="row-between">
+        <div>
+          <p class="eyebrow">통계·감독</p>
+          <h1>분류 현황과 판단 이력</h1>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="a-manual">
+          <span>AI 표시 일시 중지 (수동 모드)</span>
+        </label>
+      </div>
+      <div class="stats" id="a-stats"></div>
+      <div class="grid2">
+        <div class="card">
+          <h2>판단 이력</h2>
+          <p class="hint">기록은 추가만 되고 고칠 수 없어요. 입력은 개인정보를 가린 글만 남깁니다.</p>
+          <div class="table-wrap"><table id="a-history"><thead><tr><th>시각</th><th>접수번호</th><th>AI 단계</th><th>최종 단계</th><th>처리</th><th>사유</th><th>AI</th></tr></thead><tbody></tbody></table></div>
+        </div>
+        <div class="card">
+          <h2>진행 중인 입법예고</h2>
+          <div id="a-lawmaking"><p class="hint">불러오는 중…</p></div>
+          <h2 class="mt">민원 키워드 (공공데이터)</h2>
+          <div id="a-data"><p class="hint">불러오는 중…</p></div>
+          <button class="btn secondary mt" id="a-reset">시연 데이터 처음으로 되돌리기</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 챗봇 -->
+  <section id="view-chat" class="view" hidden>
+    <div class="narrow">
+      <p class="eyebrow">서비스 안내</p>
+      <h1>무엇이 궁금하세요?</h1>
+      <p class="notice"><b>AI 사용 안내</b> 이 챗봇은 AI가 답변참고문서만 근거로 답해요. 답마다 근거 문서를 붙이고, 개별 민원의 결과는 판단하지 않아요.</p>
+      <div class="examples" id="q-examples"></div>
+      <div id="chat-log" class="chat-log" aria-live="polite"></div>
+      <form id="form-chat" class="chat-form">
+        <label for="q" class="sr">질문</label>
+        <input id="q" maxlength="500" placeholder="예: 차단후보가 되면 접수가 거부되나요?" required>
+        <button class="btn primary" type="submit">묻기</button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<div id="modal" class="modal" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="m-title">
+    <h2 id="m-title">제출 전에 표현을 한 번 살펴봐 주세요</h2>
+    <p>아래 문장은 담당자에게 상처가 될 수 있는 표현으로 보여요. 고치지 않아도 그대로 접수돼요.</p>
+    <div class="m-block"><span class="label">문제가 된 문장</span><ul id="m-evidence"></ul></div>
+    <div class="m-block"><span class="label">이유</span><p id="m-reason"></p></div>
+    <div class="m-block suggest"><span class="label">이렇게 바꿔 보면 어떨까요 <em class="ai-tag">AI가 만든 문장</em></span><p id="m-suggest"></p></div>
+    <div class="m-actions">
+      <button class="btn primary" id="m-use">제안대로 고치기</button>
+      <button class="btn secondary" id="m-edit">직접 고치기</button>
+      <button class="btn tertiary" id="m-asis">그대로 제출</button>
+    </div>
+  </div>
+</div>
+
+<footer class="foot">한성대학교 AI 기반 공공행정 캡스톤 2026-2 시제품 · 모든 민원은 [가상 예시]이며 실제 민원·개인정보를 쓰지 않아요 · 문의: 성북구 감사담당관 02-2241-4901</footer>
+<script src="app.js"></script>
+</body>
+</html>
