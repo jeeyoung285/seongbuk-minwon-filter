@@ -1,5 +1,7 @@
 // 공공 API 는 서버(api)에서만 부른다. 실패하면 이유와 「시연 값」을 함께 돌려준다.
 const TIMEOUT = 8000;
+// 법령정보센터·국민참여입법센터는 신청 때 등록한 도메인을 Referer 로 확인한다(없으면 「필수 입력값이 존재하지 않습니다」)
+const SITE_URL = (process.env.SITE_URL || 'https://seongbuk-minwon-filter-hnud.vercel.app').replace(/\/$/, '') + '/';
 
 // 시연 값: 기획서(팀_기획서.md 5.3절, 2026.10.25.~11.05. 국가법령정보센터 확인) 기준
 const DEMO_LAW = {
@@ -21,10 +23,10 @@ function classify(e, status, body) {
   return `오류: HTTP ${status}`;
 }
 
-async function fetchText(url) {
+async function fetchText(url, headers = {}) {
   let status = 0, body = '';
   try {
-    const r = await fetch(url, { signal: AbortSignal.timeout(TIMEOUT) });
+    const r = await fetch(url, { headers, signal: AbortSignal.timeout(TIMEOUT) });
     status = r.status; body = await r.text();
     if (!r.ok) return { ok: false, reason: classify(null, status, body) };
     return { ok: true, body };
@@ -40,7 +42,7 @@ async function lawInfo(name) {
   if (!oc) return { ok: false, live: false, reason: '키 비어 있음 (LAW_OC)', value: demo };
   const target = /조례/.test(name) ? 'ordin' : 'law';
   const url = `https://www.law.go.kr/DRF/lawSearch.do?OC=${encodeURIComponent(oc)}&target=${target}&type=JSON&display=5&query=${encodeURIComponent(name)}`;
-  const r = await fetchText(url);
+  const r = await fetchText(url, { referer: SITE_URL });
   if (!r.ok) return { ok: false, live: false, reason: r.reason, value: demo };
   try {
     const j = JSON.parse(r.body);
@@ -65,7 +67,7 @@ async function lawmaking(query = '민원 처리에 관한 법률') {
   const oc = (process.env.LAWMAKING_OC || '').trim();
   if (!oc) return { ok: false, live: false, reason: '키 비어 있음 (LAWMAKING_OC)', items: DEMO_LAWMAKING };
   const url = `https://opinion.lawmaking.go.kr/rest/ogLmPp?OC=${encodeURIComponent(oc)}&lsNm=${encodeURIComponent(query)}`;
-  const r = await fetchText(url);
+  const r = await fetchText(url, { referer: SITE_URL });
   if (!r.ok) return { ok: false, live: false, reason: r.reason, items: DEMO_LAWMAKING };
   const items = [...r.body.matchAll(/<(?:lsNm|법령안명)>([\s\S]*?)<\/(?:lsNm|법령안명)>/g)].map(m => ({ title: m[1].trim(), org: '', period: '', note: '실시간' }));
   if (!items.length) return { ok: false, live: false, reason: classify(null, 200, r.body) === '승인 안 됨' ? '승인 안 됨' : '진행 중인 입법예고 없음 또는 응답 형식 다름', items: DEMO_LAWMAKING };
