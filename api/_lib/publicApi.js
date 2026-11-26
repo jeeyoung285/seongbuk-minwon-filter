@@ -49,7 +49,8 @@ async function lawInfo(name) {
     if (!Array.isArray(items)) items = [items];
     const norm = s => String(s || '').replace(/\s/g, '');
     const hit = items.find(i => norm(i['법령명한글'] || i['자치법규명']) === norm(name)) || items[0];
-    if (!hit) return { ok: false, live: false, reason: '검색 결과 없음', value: demo };
+    // 검증 실패 등은 {result, msg} 로 온다 → 그 문구를 그대로 실패 이유로 보여 준다
+    if (!hit) return { ok: false, live: false, reason: j.msg || j.result || (j.Response && (j.Response.msg || j.Response.result)) || '검색 결과 없음', value: demo };
     const d = String(hit['시행일자'] || '');
     const date = d.length === 8 ? `${d.slice(0, 4)}.${+d.slice(4, 6)}.${+d.slice(6)}.` : d;
     return { ok: true, live: true, value: `${date} 시행`, source: '국가법령정보센터 실시간' };
